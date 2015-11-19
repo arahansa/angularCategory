@@ -4,6 +4,7 @@
   <title>title</title>
   <style>
   	li { margin-bottom: 5px;}
+  	span { display: block; border : 1px solid black; margin-bottom: 3px;}
   </style>
 </head>
 <body ng-controller="categoryController" ng-init="init()">
@@ -25,7 +26,9 @@ hello. practice
 <button ng-click="saveCategory()"> save to database </button> <br>
 
 <div id="modelList">
- {{categoryList}}
+ <span class="listSpan" ng-repeat="category in categoryList">
+ 	{{category}} 
+ </span>
 </div>
 <div id="deleteList">
 
@@ -48,17 +51,19 @@ app.controller('categoryController', function($scope){
 	$scope.deleteList = [];
 	$scope.tempList = [];
 
+	$scope.init = init;
 	$scope.insertCategory= insertCategory;
 	$scope.deleteCategory= deleteCategory;
 	$scope.upCategory= upCategory;
-	$scope.downCategory= downCategory;
-	$scope.init = init;
+	$scope.downCategory= downCategory;	
 
 	function init(){
 		$($scope.categoryList).each(function(k,v){
 			v.cb=false;
 		});
+		$scope.categoryList = $scope.categoryList.sort(ascSort);
 	}
+
 	function insertCategory(){
 		$scope.tempId++;
 		$scope.categoryList.push({ "id": $scope.tempId, "name" : $scope.tempCategory})
@@ -95,64 +100,42 @@ app.controller('categoryController', function($scope){
 				}
 			}
 		}
+
+		$scope.categoryList = $scope.categoryList.sort(ascSort);
 	}
 
 	function downCategory(){
 		for(var i=0;i<$scope.categoryList.length;i++){
 			var $this = $scope.categoryList[i];
-			
 			if($this.cb==true){
-				console.log(" 템프 삽입! ",$this);
-				$scope.tempList.push({"num":i, "obj" : $this});
-			}else{
-				if($scope.tempList.length!=0){
-					
-					$source = $scope.tempList[0];
-					if($source.obj.id > $this.id) continue;
-					
-					$this.id=$source.obj.id;
-					$($scope.tempList).each(function(k,v){
-						console.log($scope.categoryList[v.num].name , " 이 증가합니다");
-						$scope.categoryList[v.num].id = $scope.categoryList[v.num].id + 1;
-					});
-					$scope.tempList = [];
-				}
+				var returnIndex = getFirstFalseIndex(i);
+				if(returnIndex!=-1){
+					$scope.categoryList[returnIndex].id=$this.id;
+					for(var j=$this.id;j<returnIndex;j++){
+						$scope.categoryList[j].id = $scope.categoryList[j].id + 1;
+					}	
+					i=returnIndex;
+				}	
 			}
-		}	
-
-		/*
-		var checkList = $("input.checkList");
-		for(var i=0; i < checkList.length; i++){
-			if($(checkList[i]).prop('checked')){
-				var id = $(checkList[i]).attr('data-id');
-				var obj = getById($scope.categoryList, id);
-				$scope.tempList.push(obj);
-			}else{
-				if($scope.tempList.length!=0){
-					console.log("0이 아니로군요")
-					$scope.tempList=[];
-				}
-			}
-			// checkPropChecked(checkList, i);
 		}
-		*/
-		// console.log( $("input.checkList")[0] , $("input.checkList").length );
-		// console.log(" 템프 속성 ", $scope.tempList);
+		$scope.categoryList = $scope.categoryList.sort(ascSort);
+
+	}
+	function getFirstFalseIndex(start){
+		var returnIndex = -1;
+		for(var i=start;i<$scope.categoryList.length;i++){
+			if($scope.categoryList[i].cb==false){
+				returnIndex = i;
+				break;
+			}
+		}
+		return returnIndex;
 	}
 
-	/*
-		function checkPropChecked(checkList, i){
-			if($(checkList[i]).prop('checked')){
-			var id = $(checkList[i]).attr('data-id');
-			var obj = getById($scope.categoryList, id);
-			$scope.tempList.push(obj);
-		}
-	}*/
-	function descSort(a,b){ var x = a['id']; var y = b['id']; return ((x < y) ? -1 : ((x > y) ? 1 : 0));}
-	function ascSort(a,b){ var x = a['id']; var y = b['id']; return ((x < y) ? 1 : ((x > y) ? -1 : 0));}
-	function getById(arr, id){
-		return $.grep(arr, function(e){ return e.id == id; })[0]
-	}
+	
+	function descSort(a,b){ var x = a['id']; var y = b['id']; return ((x < y) ? 1 : ((x > y) ? -1 : 0));}
+	function ascSort(a,b){ var x = a['id']; var y = b['id']; return ((x < y) ? -1 : ((x > y) ? 1 : 0));}
+	
 
 });
 
