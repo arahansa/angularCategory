@@ -1,0 +1,116 @@
+<html ng-app="testApp">
+ <head>
+  <meta charset="utf-8">
+  <title>title</title>
+  <style>
+  	li { margin-bottom: 5px;}
+  </style>
+</head>
+<body ng-controller="categoryController">
+
+hello. practice
+
+<ul id="list">
+	<li ng-repeat="category in categoryList|orderBy :'id'">
+		<input data-id="{{category.id}}" type="checkbox" class="checkList" /> {{category.name}}
+	</li>
+</ul>
+
+<button ng-click="upCategory()"> up </button> <br><br>
+<button ng-click="downCategory()"> down</button> <br>
+<hr>
+<input id="toInsert" ng-model="tempCategory" type="text" />
+<button ng-click="insertCategory()">  add category </button> <br><br>
+<button ng-click="deleteCategory()">delete category</button> <br><br>
+<button ng-click="saveCategory()"> save to database </button> <br>
+
+<div id="modelList">
+
+</div>
+<div id="deleteList">
+
+</div>
+
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+<script>
+var app = angular.module('testApp', []);
+app.controller('categoryController', function($scope){
+	$scope.tempId=4;
+	$scope.categoryList = [
+		{"id": 0, "name" : "hello" },
+		{"id": 1, "name" : "hi"},
+		{"id": 2, "name" : "ni hao"},
+		{"id": 3, "name" : "nice to meet you"},
+		{"id": 4, "name" : "what's up? "}
+	]
+	$scope.deleteList = [];
+	$scope.tempList = [];
+
+	$scope.insertCategory= insertCategory;
+	$scope.deleteCategory= deleteCategory;
+	$scope.upCategory= upCategory;
+	$scope.downCategory= downCategory;
+
+	function insertCategory(){
+		$scope.tempId++;
+		$scope.categoryList.push({ "id": $scope.tempId, "name" : $scope.tempCategory})
+		$scope.tempCategory="";
+	}
+
+	function deleteCategory(){
+		$("input.checkList").each(function(k,v){
+			console.log( $(v).prop('checked') );
+			if($(v).prop('checked')){
+				var obj = getById($scope.categoryList, $(v).attr('data-id'));
+				var index = $scope.categoryList.indexOf(obj);
+				$scope.categoryList.splice(index ,1);
+				$scope.deleteList.push(obj);
+			}
+		});
+		console.log("삭제된 데이터들 :: ", $scope.deleteList);
+	}
+
+	function upCategory(){
+		
+	}
+
+	function downCategory(){
+		var checkList = $("input.checkList");
+		for(var i=0; i < checkList.length; i++){
+			if($(checkList[i]).prop('checked')){
+				var id = $(checkList[i]).attr('data-id');
+				var obj = getById($scope.categoryList, id);
+				$scope.tempList.push(obj);
+			}else{
+				if($scope.tempList.length!=0){
+					console.log("0이 아니로군요")
+				}
+			}
+			// checkPropChecked(checkList, i);
+		}
+		// console.log( $("input.checkList")[0] , $("input.checkList").length );
+		// console.log(" 템프 속성 ", $scope.tempList);
+	}
+
+	/*
+		function checkPropChecked(checkList, i){
+			if($(checkList[i]).prop('checked')){
+			var id = $(checkList[i]).attr('data-id');
+			var obj = getById($scope.categoryList, id);
+			$scope.tempList.push(obj);
+		}
+	}*/
+	function getById(arr, id){
+		return $.grep(arr, function(e){ return e.id == id; })[0]
+	}
+
+});
+
+
+
+
+
+</script>
+</body>
+</html>
