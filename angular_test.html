@@ -17,19 +17,26 @@ hello. practice
 	</li>
 </ul>
 
-<button ng-click="upCategory()"> up </button> <br><br>
+<button ng-click="upCategory()"> up </button> &nbsp;&nbsp;&nbsp;
 <button ng-click="downCategory()"> down</button> <br>
 <hr>
 <input id="toInsert" ng-model="tempCategory" type="text" />
 <button ng-click="insertCategory()">  add category </button> <br><br>
 <button ng-click="deleteCategory()">delete category</button> <br><br>
-<button ng-click="saveCategory()"> save to database </button> <br>
+<button ng-click="saveCategory()"> save to database </button> 
+<input id="saveCategoryResult" type="text" width="500px" /> <br>
 
-<div id="modelList">
+
+ 
  <span class="listSpan" ng-repeat="category in categoryList">
  	{{category}} 
  </span>
-</div>
+ <br>
+Delete List :: ===  <br>
+  <span class="listSpan" ng-repeat="category in deleteList">
+ 	{{category}} 
+ </span>
+
 <div id="deleteList">
 
 </div>
@@ -39,34 +46,38 @@ hello. practice
 <script>
 var app = angular.module('testApp', []);
 app.controller('categoryController', function($scope){
-	$scope.tempId=4;
+	
 	$scope.categoryList = [
-		
-		{"id": 0, "name" : "hello"},
-		{"id": 1, "name" : "hi"},
-		{"id": 2, "name" : "ni hao"},
-		{"id": 3, "name" : "nice to meet you"},
-		{"id": 4, "name" : "what's up? "}
+		{"id": 0, "name" : "안녕1"},
+		{"id": 1, "name" : "하이2"},
+		{"id": 2, "name" : "하이3"},
+		{"id": 3, "name" : "하이4"},
+		{"id": 4, "name" : "하이5"},
+		{"id": 5, "name" : "하이6"},
+		{"id": 6, "name" : "하이7"},
+		{"id": 7, "name" : "하이8? "},
+		{"id": 8, "name" : "하이9? "},
+		{"id": 9, "name" : "하이10? "},
+		{"id": 10, "name" : "하이11? "}
 	]
 	$scope.deleteList = [];
-	$scope.tempList = [];
-
 	$scope.init = init;
-	$scope.insertCategory= insertCategory;
-	$scope.deleteCategory= deleteCategory;
-	$scope.upCategory= upCategory;
-	$scope.downCategory= downCategory;	
+	$scope.insertCategory = insertCategory;
+	$scope.deleteCategory = deleteCategory;
+	$scope.upCategory = upCategory;
+	$scope.downCategory = downCategory;
+	$scope.saveCategory = saveCategory;	
 
 	function init(){
 		$($scope.categoryList).each(function(k,v){
 			v.cb=false;
+			v.initial_id= v.id;
 		});
 		$scope.categoryList = $scope.categoryList.sort(ascSort);
 	}
 
 	function insertCategory(){
-		$scope.tempId++;
-		$scope.categoryList.push({ "id": $scope.tempId, "name" : $scope.tempCategory})
+		$scope.categoryList.push({ "id": $scope.categoryList.length, "name" : $scope.tempCategory})
 		$scope.tempCategory="";
 	}
 
@@ -80,27 +91,27 @@ app.controller('categoryController', function($scope){
 			}
 		}
 		console.log("삭제된 데이터들 :: ", $scope.deleteList);
-		// TODO :: 현재 LIST id 정렬
+		$scope.categoryList = $scope.categoryList.sort(ascSort);
+		for (var i = 0; i < $scope.categoryList.length; i++) {
+			$scope.categoryList[i].id = i;
+		};
 	}
 
 	function upCategory(){
-		for(var i=$scope.categoryList.length-1;i>=0;i--){
+		for(var i=0;i<$scope.categoryList.length;i++){
 			var $this = $scope.categoryList[i];
 			if($this.cb==true){
-				$scope.tempList.push({"num":i, "obj" : $this});
-			}else{
-				if($scope.tempList.length!=0){
-					$source = $scope.tempList[0];
-					if($source.obj.id < $this.id) continue;
-					$this.id=$source.obj.id;
-					$($scope.tempList).each(function(k,v){
-						$scope.categoryList[v.num].id = $scope.categoryList[v.num].id - 1;
-					});
-					$scope.tempList = [];
-				}
+				var returnIndex = getFirstFalseIndex(i);
+				if( returnIndex == -1 ) returnIndex = $scope.categoryList.length;
+				if(i!=0){
+					$scope.categoryList[i-1].id=$scope.categoryList[returnIndex-1].id
+					for(var j=$this.id;j<returnIndex;j++){
+						$scope.categoryList[j].id = $scope.categoryList[j].id - 1;
+					}
+					i=returnIndex;	
+				}	
 			}
 		}
-
 		$scope.categoryList = $scope.categoryList.sort(ascSort);
 	}
 
@@ -119,8 +130,24 @@ app.controller('categoryController', function($scope){
 			}
 		}
 		$scope.categoryList = $scope.categoryList.sort(ascSort);
+	}
+
+	function saveCategory(){
+		var updateTxt = "Update=";
+		$($scope.categoryList).each(function (k,v){
+			if(v.id != v.initial_id){
+				updateTxt += ("," + v.id);	
+			}
+		});	
+
+		var deleteTxt = "Delete=";
+		$($scope.deleteList).each(function (k,v){
+			deleteTxt +=  ("," + v.id);
+		});
+		$("#saveCategoryResult").val(updateTxt + "::" +deleteTxt);
 
 	}
+
 	function getFirstFalseIndex(start){
 		var returnIndex = -1;
 		for(var i=start;i<$scope.categoryList.length;i++){
@@ -131,18 +158,10 @@ app.controller('categoryController', function($scope){
 		}
 		return returnIndex;
 	}
-
 	
 	function descSort(a,b){ var x = a['id']; var y = b['id']; return ((x < y) ? 1 : ((x > y) ? -1 : 0));}
 	function ascSort(a,b){ var x = a['id']; var y = b['id']; return ((x < y) ? -1 : ((x > y) ? 1 : 0));}
-	
-
 });
-
-
-
-
-
 </script>
 </body>
 </html>
