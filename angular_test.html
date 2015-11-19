@@ -6,13 +6,13 @@
   	li { margin-bottom: 5px;}
   </style>
 </head>
-<body ng-controller="categoryController">
+<body ng-controller="categoryController" ng-init="init()">
 
 hello. practice
 
 <ul id="list">
 	<li ng-repeat="category in categoryList|orderBy :'id'">
-		<input data-id="{{category.id}}" type="checkbox" class="checkList" /> {{category.name}}
+		<input data-id="{{category.id}}" type="checkbox" class="checkList" ng-model="category.cb" /> {{category.name}}
 	</li>
 </ul>
 
@@ -25,7 +25,7 @@ hello. practice
 <button ng-click="saveCategory()"> save to database </button> <br>
 
 <div id="modelList">
-
+ {{categoryList}}
 </div>
 <div id="deleteList">
 
@@ -38,7 +38,8 @@ var app = angular.module('testApp', []);
 app.controller('categoryController', function($scope){
 	$scope.tempId=4;
 	$scope.categoryList = [
-		{"id": 0, "name" : "hello" },
+		
+		{"id": 0, "name" : "hello"},
 		{"id": 1, "name" : "hi"},
 		{"id": 2, "name" : "ni hao"},
 		{"id": 3, "name" : "nice to meet you"},
@@ -51,7 +52,13 @@ app.controller('categoryController', function($scope){
 	$scope.deleteCategory= deleteCategory;
 	$scope.upCategory= upCategory;
 	$scope.downCategory= downCategory;
+	$scope.init = init;
 
+	function init(){
+		$($scope.categoryList).each(function(k,v){
+			v.cb=false;
+		});
+	}
 	function insertCategory(){
 		$scope.tempId++;
 		$scope.categoryList.push({ "id": $scope.tempId, "name" : $scope.tempCategory})
@@ -59,23 +66,61 @@ app.controller('categoryController', function($scope){
 	}
 
 	function deleteCategory(){
-		$("input.checkList").each(function(k,v){
-			console.log( $(v).prop('checked') );
-			if($(v).prop('checked')){
-				var obj = getById($scope.categoryList, $(v).attr('data-id'));
-				var index = $scope.categoryList.indexOf(obj);
-				$scope.categoryList.splice(index ,1);
-				$scope.deleteList.push(obj);
+		for(var i=0;i<$scope.categoryList.length;i++){
+			var $this = $scope.categoryList[i];
+			if($this.cb==true){
+				$scope.deleteList.push($this);
+				$scope.categoryList.splice(i,1);
+				i--;
 			}
-		});
+		}
 		console.log("삭제된 데이터들 :: ", $scope.deleteList);
+		// TODO :: 현재 LIST id 정렬
 	}
 
 	function upCategory(){
-		
+		for(var i=$scope.categoryList.length-1;i>=0;i--){
+			var $this = $scope.categoryList[i];
+			if($this.cb==true){
+				$scope.tempList.push({"num":i, "obj" : $this});
+			}else{
+				if($scope.tempList.length!=0){
+					$source = $scope.tempList[0];
+					if($source.obj.id < $this.id) continue;
+					$this.id=$source.obj.id;
+					$($scope.tempList).each(function(k,v){
+						$scope.categoryList[v.num].id = $scope.categoryList[v.num].id - 1;
+					});
+					$scope.tempList = [];
+				}
+			}
+		}
 	}
 
 	function downCategory(){
+		for(var i=0;i<$scope.categoryList.length;i++){
+			var $this = $scope.categoryList[i];
+			
+			if($this.cb==true){
+				console.log(" 템프 삽입! ",$this);
+				$scope.tempList.push({"num":i, "obj" : $this});
+			}else{
+				if($scope.tempList.length!=0){
+					
+					$source = $scope.tempList[0];
+					if($source.obj.id > $this.id) continue;
+					
+					$this.id=$source.obj.id;
+					$($scope.tempList).each(function(k,v){
+						console.log($scope.categoryList[v.num].name , " 이 증가합니다");
+						$scope.categoryList[v.num].id = $scope.categoryList[v.num].id + 1;
+					});
+					$scope.tempList = [];
+				}
+			}
+		}	
+
+		/*
 		var checkList = $("input.checkList");
 		for(var i=0; i < checkList.length; i++){
 			if($(checkList[i]).prop('checked')){
@@ -85,10 +130,12 @@ app.controller('categoryController', function($scope){
 			}else{
 				if($scope.tempList.length!=0){
 					console.log("0이 아니로군요")
+					$scope.tempList=[];
 				}
 			}
 			// checkPropChecked(checkList, i);
 		}
+		*/
 		// console.log( $("input.checkList")[0] , $("input.checkList").length );
 		// console.log(" 템프 속성 ", $scope.tempList);
 	}
@@ -101,6 +148,8 @@ app.controller('categoryController', function($scope){
 			$scope.tempList.push(obj);
 		}
 	}*/
+	function descSort(a,b){ var x = a['id']; var y = b['id']; return ((x < y) ? -1 : ((x > y) ? 1 : 0));}
+	function ascSort(a,b){ var x = a['id']; var y = b['id']; return ((x < y) ? 1 : ((x > y) ? -1 : 0));}
 	function getById(arr, id){
 		return $.grep(arr, function(e){ return e.id == id; })[0]
 	}
