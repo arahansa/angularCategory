@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+<form name="frmOrder">
+    <input name="order">
+<table>
+<caption>노출순서 조정</caption>
+    <tr>
+        <td>
+            <select id="list" name="list" size="10">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+        </td>
+        <td>
+            <input type="button" onclick="fnGoTop(frmOrder.list)" style="width: 100px" value="맨위로" /><br />
+            <input type="button" onclick="fnGoUp(frmOrder.list)" style="width: 100px" value="위로" /><br />
+            <input type="button" onclick="fnGoDown(frmOrder.list)" style="width: 100px" value="아래로" /><br />
+            <input type="button" onclick="fnGoBottom(frmOrder.list)" style="width: 100px" value="맨아래로" /><br />
+            <input type="button" onclick="fnSave(frmOrder.list)" style="width: 100px" value="저장" />
+        </td>
+    </tr>
+</table>    
+</form>
+</body>
+</html>
+
+<script type="text/javascript">
+    function fnSave(obj) {
+        var i;
+        var opts = obj.options;
+        var order = frmOrder.order;
+        
+        order.value = "";
+        for (i = 0; i < opts.length - 1; i++) {
+            order.value += opts[i].value + ",";
+        }
+        order.value += opts[i].value;
+        //document.frmOrder.submit();
+    }
+    function fnGoUp(obj) {
+        if(obj.selectedIndex == -1) {
+            alert("대표분류를 선택하세요");
+            return;
+        }
+        var opts = obj.options;
+        for (var i = 0; i < opts.length; i++) {
+            if (opts[i].selected && i > 0) {
+                tmp = opts[i].cloneNode(true);
+                opts[i].remove(true);
+                opts[i - 1].insertAdjacentElement("beforeBegin", tmp).selected = true;
+            }
+        }
+        obj.focus();
+    }
+    function fnGoDown(obj) {
+        if(obj.selectedIndex == -1) {
+            alert("대표분류를 선택하세요");
+            return;
+        }
+        var opts = obj.options;
+        for (var i = opts.length - 1; i >= 0; i--) {
+            if (opts[i].selected && i < opts.length - 1) {
+                tmp = opts[i].cloneNode(true);
+                opts[i].remove(true);
+                opts[i].insertAdjacentElement("afterEnd", tmp).selected = true;
+            }
+        }
+        obj.focus();
+    }
+    function fnGoTop(obj) {
+        if(obj.selectedIndex == -1) {
+            alert("대표분류를 선택하세요");
+            return;
+        }
+        var opt = obj.options[obj.selectedIndex];
+        var clon = opt.cloneNode(true);
+        opt.remove(true);
+        obj.options.insertAdjacentElement("afterBegin", clon).selected = true;
+        obj.focus();
+    }
+    function fnGoBottom(obj) {
+        if(obj.selectedIndex == -1) {
+            alert("대표분류를 선택하세요");
+            return;
+        }
+        var opt = obj.options[obj.selectedIndex];
+        var clon = opt.cloneNode(true);
+        opt.remove(true);
+        obj.options.insertAdjacentElement("beforeEnd", clon).selected = true;
+        obj.focus();
+    }
+</script>
