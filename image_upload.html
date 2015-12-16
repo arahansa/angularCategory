@@ -4,21 +4,21 @@
   <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js"></script>
   <style>
-  .social_upload_img {
+  .upload_img {
     display: block;
     overflow: hidden;
     clear: both;
     padding-top: 32px;
     position: relative;
    }
-  .social_upload_img li {
+  .upload_img li {
     float: left;
     border: 2px solid #2c2c2c;
     position: relative;
     height: 126px;
     margin-right: 30px;
 }
-   .social_upload_img li a {
+   .upload_img li a {
     position: absolute;
     top: 0;
     right: 0;
@@ -35,7 +35,7 @@
 <span id="point"></span>
 
 <br>
-<ul class="social_upload_img">
+<ul class="upload_img">
   
   
 </ul>
@@ -52,7 +52,7 @@
  		$(this).closest("li").remove();
     //삭제시 현재 위의 것들 숫자 줄이기
  		for(var i=sequence; i<=2;i++){
- 			var li_selectedImage = "ul.social_upload_img li[pic-sequence="+i+"]";
+ 			var li_selectedImage = "ul.upload_img li[pic-sequence="+i+"]";
  			$("input.fileAppender[pic-sequence="+i+"]").attr("pic-sequence", i-1);
  			$(li_selectedImage).attr("pic-sequence", i-1);
  		}
@@ -80,14 +80,14 @@
                  }else{
                      if (this.files && this.files[0]) {
                      	var pic_sequence = $(this).attr("pic-sequence");
-                      var selectedImage = "ul.social_upload_img li[pic-sequence="+pic_sequence+"]";
+                      var selectedImage = "ul.upload_img li[pic-sequence="+pic_sequence+"]";
                       var fileName = this.files[0].name;
                         
 
                         var temp = $('#liPanel').html();
                         var rendered = Mustache.render( temp, {sequence: Number(pic_sequence)} );
 
-                        $("ul.social_upload_img").append(rendered);
+                        $("ul.upload_img").append(rendered);
                          var reader = new FileReader();
                          reader.onload = function (e) { $(selectedImage +" img.targetImg").attr("src", e.target.result); }
                          reader.readAsDataURL(this.files[0]);
