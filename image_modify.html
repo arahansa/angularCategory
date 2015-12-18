@@ -58,9 +58,14 @@
 </ul>
 
 <button onclick="printImages()">출력! </button>
+<div id="targetDiv" style="width: 500px;height:500px;">
+
+</div>
+
 
 <script>
 
+//  최대 길이
 var maxLength=4;
 
 function sortInputHiddenFiles(sequence, lastValuePoint){
@@ -134,10 +139,11 @@ function sortFileAppender(sequence, maxLength){
       $(targetFileAppender).show();
     }
 
-  });
+  });// 삭제 이벤트
+
   $(document).on('change', '.fileAppender', function(){
     var ext = $(this).val().split('.').pop().toLowerCase();
-             if(ext != ""){
+    if(ext != ""){
                  if($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
                      alert("이미지를 올려주세요");
                      
@@ -171,11 +177,13 @@ function sortFileAppender(sequence, maxLength){
                      }
                  }
              }
-  });
+  }); // file change 
 }); //document on ready
 function printImages(){
   $("input.fileAppender:not(.saved)").remove();
-  console.log( "파일들 ", $("input.fileAppender")[0] ,$("input.fileAppender")[1], $("input.fileAppender")[2]  );
+  console.log("결과 출력물들 ",$("input.hiddenImageValue") );
+  console.log( "파일들 ", $("input.fileAppender")  );
+  console.log("최초 수정 위치 : ", $($("input.fileAppender")[0]).attr("pic-sequence") );
 }
 function fn_fileBoxClear(){
     if (browser.name == 'msie') {    //IE version
