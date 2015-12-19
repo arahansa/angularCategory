@@ -29,16 +29,20 @@
 </head>
 <body>
 
-
+<!-- 기존의 이미지들 -->
+<input type="hidden" class="hiddenImageValue" pic-sequence="0" name="imgfile1" value="10_사자.jpg" />
+<input type="hidden" class="hiddenImageValue" pic-sequence="1" name="imgfile2" value="11_쵸파.jpg" />
+<!-- 파일업로드가 들어갈 부분 -->
 <input type="file" class="fileAppender" name="file" pic-sequence="0"  />
+
+
+
 
 <span id="point"></span>
 
 <br>
 <ul class="social_upload_img">
-  <input type="hidden" class="hiddenImageValue" pic-sequence="0" name="imgfile1" value="10_사자.jpg" />
-  <input type="hidden" class="hiddenImageValue" pic-sequence="1" name="imgfile2" value="11_쵸파.jpg" />
-  <input type="hidden" class="hiddenImageValue" pic-sequence="2" name="imgfile3" value="13_니가해.jpg" />
+  
 
   <li pic-sequence="0">
       <img class="targetImg"  alt="" src="10_사자.jpg" width="226px" height="126px"/>
@@ -50,11 +54,7 @@
       <a href="#"><img class="deleteImg" alt="" src="images/social/img_close.png" /></a>
       <span></span>
   </li>
-  <li pic-sequence="2">
-      <img class="targetImg"  alt="" src="13_니가해.jpg" width="226px" height="126px"/>
-      <a href="#"><img class="deleteImg" alt="" src="images/social/img_close.png" /></a>
-      <span></span>
-  </li>
+  
 </ul>
 
 <button onclick="printImages()">출력! </button>
