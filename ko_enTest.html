@@ -1,0 +1,69 @@
+<html>
+ <head>
+  <meta charset="utf-8">
+  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+</head>
+<body>
+ hi.hi. 
+
+ <button onclick="setLanguage('ko')">한국 세트로 변경</button>
+ <button onclick="setLanguage('en')">영어 세트로 변경</button>
+ <button onclick="getCurrentLang()">현재 언어 출력 버튼</button>
+ <button onclick="App.Hello()">헬로</button>
+ <button onclick="App.Hi()">하이</button>
+ <hr>
+ <h3>console log 창을 켜주세요 ! </h3>
+ <hr>
+  
+<script>
+
+	$(function(){
+  			console.log("프로그램 시작 ");
+  			App.init('ko'); // 외주 주입 버튼 부분
+  	});
+
+  	var App = {};
+  	
+  	App.lang = 'ko';
+
+  	App.messages = { 
+  		ko : { hello : "안녕" , hi :"하이" } , 
+  	    en : { hello : "hello" , hi : "hi"}
+  	} ;
+  	
+  	App.getCurrentLang = function(){
+  		console.log(App.lang);
+  		return App.lang;
+  	}
+  	App.init = function(lang){
+  		App.lang=lang;
+  		console.log("언어 셋이 ", lang, "으로 변경되었습니다");
+  	}
+  	
+  	App.setLanguage = function(lang){
+  		App.lang = lang;
+  		console.log("언어 셋이 ", lang, "으로 변경되었습니다");
+  	}
+
+  	App.Hello = function(){
+  		console.log( App.messages[App.lang].hello );
+  	}
+
+  	App.Hi = function(){
+  		console.log( App.messages[App.lang].hi );
+  	}
+  	
+  	function getCurrentLang(){
+  		console.log("현재 언어셋은 "+App.getCurrentLang()+"입니다");
+  	}
+
+	
+	function setLanguage(lang) {
+	  App.setLanguage(lang);
+  	}	
+
+  	
+</script>
+</body>
+</html>
